@@ -7,25 +7,25 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
-  <form method="POST">
+  <div>
+    <form action="{% if editTask %}{% url 'edit_task' editTask.id%}{% else %}{% url 'home' %}{% endif %}" method="POST">
     {%csrf_token%}
     <div class="form-group">
       <label >Title</label>
-      <input type="text" name = "title" class="form-control"placeholder="titile">
+      <input type="text" name="title" class="form-control" placeholder="title" required value="{{ editTask.task_title|default:'' }}">
     </div>
    
-    </div>
     <div class="form-group">
-      <label >Description</label>
-      <textarea class="form-control" name = "description"></textarea>
+      <label> Description </label>
+      <textarea class="form-control" name = "description" required>{{ editTask.task_description|default:'' }}</textarea>
     </div>
     <div>
-      <label for="">Select end time of this task</label>
+      <label for=""> Select end time of this task </label>
       <input type="time" name = "endtime" value = "{{current_time}}">
-      <button type="submit"> add task</button>
+      <button type="submit"> {%if editTask%}Update {%else%}Add task {%endif%}</button>
     </div>
-
   </form>
+</div>
     <table class="table">
         <thead>
           <tr>
@@ -36,7 +36,6 @@
           </tr>
         </thead>
         <tbody>
-          {%csrf_token%}
           <tr>
             {%for task in tasks%}
             <th scope="row">{{forloop.counter}}</th>
@@ -44,10 +43,10 @@
             <td>{{task.task_description}}</td>
             <td>{{task.endtime}}</td>
             <td>
-              <a href=""><button>edit</button></a>
+              <a href="{% url 'edit_task' task.id %}"><button>edit</button></a>
             </td>
             <td>
-              <a href="{%url 'remove_task' task.id %}"><button>remove</button></a>
+              <a href="{% url 'remove_task' task.id %}"><button>remove</button></a>
             </td>
           </tr>
             {%endfor%}
